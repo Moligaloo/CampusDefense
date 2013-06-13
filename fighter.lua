@@ -67,7 +67,8 @@ function Fighter:initialize(map, info)
 	self.offset = Point(0,0)
 	self.keeptime = 0
 	self.selected = false
-	self.hp = 10
+	self.hp = info.properties.hp or 10
+	self.maxhp = info.properties.maxhp or 10
 
 	local posX = math.floor(info.x / self.width)
 	local posY = math.floor(info.y / self.height)
@@ -97,8 +98,9 @@ function Fighter:update(dt)
 
 		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
 			self.offset = Point(0, 0)
+			self.pos = self.pos + faceOffsets[self.path[1]]
+
 			self.face = table.remove(self.path, 1)
-			self.pos = self.pos + faceOffsets[self.face]
 			self:updateClip()
 
 			if not next(self.path) then
@@ -122,7 +124,7 @@ function Fighter:update(dt)
 end
 
 function Fighter:startMove()
-	if self.path then
+	if self.path and not self.isMoving then
 		self.face = self.path[1]
 		self.isMoving = true
 	end
@@ -176,7 +178,7 @@ function Fighter:draw()
 
 	-- draw hp slot
 	do
-		local width = (self.width - 2) * self.hp / 10
+		local width = (self.width - 2) * self.hp / self.maxhp
 		local height = 5
 		local x = self.pos.x * self.width + 1 + self.offset.x
 		local y = (self.pos.y +1) * self.height + self.offset.y
@@ -184,6 +186,8 @@ function Fighter:draw()
 		love.graphics.setColor(0xFF, 0x00, 0x00, 0x80)
 		love.graphics.rectangle('fill', x, y, width, height)
 		love.graphics.reset()
+
+		love.graphics.printf(("%d/%d"):format(self.hp, self.maxhp), x, y, width, 'right')
 	end
 end
 
