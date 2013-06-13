@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="30" height="20" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="land" tilewidth="32" tileheight="32">
+  <image source="../tilesets/land.png" width="768" height="640"/>
+  <terraintypes>
+   <terrain name="浅色草丛" tile="25"/>
+   <terrain name="深色草丛" tile="28"/>
+  </terraintypes>
+  <tile id="0" terrain=",,,0"/>
+  <tile id="1" terrain=",,0,0"/>
+  <tile id="2" terrain=",,0,"/>
+  <tile id="3" terrain=",,,1"/>
+  <tile id="4" terrain=",,1,1"/>
+  <tile id="5" terrain=",,1,"/>
+  <tile id="24" terrain=",0,,0"/>
+  <tile id="25" terrain="0,0,0,0"/>
+  <tile id="26" terrain="0,,0,"/>
+  <tile id="27" terrain=",1,,1"/>
+  <tile id="28" terrain="1,1,1,1"/>
+  <tile id="29" terrain="1,,1,"/>
+  <tile id="48" terrain=",0,,"/>
+  <tile id="49" terrain="0,0,,"/>
+  <tile id="50" terrain="0,,,"/>
+  <tile id="51" terrain=",1,,"/>
+  <tile id="52" terrain="1,1,,"/>
+  <tile id="53" terrain="1,,,"/>
+  <tile id="72" terrain="0,0,0,"/>
+  <tile id="73" terrain="0,0,,0"/>
+  <tile id="75" terrain="1,1,1,"/>
+  <tile id="76" terrain="1,1,,1"/>
+  <tile id="96" terrain="0,,0,0"/>
+  <tile id="97" terrain=",0,0,0"/>
+  <tile id="99" terrain="1,,1,1"/>
+  <tile id="100" terrain=",1,1,1"/>
+ </tileset>
+ <tileset firstgid="481" name="water" tilewidth="32" tileheight="32">
+  <image source="../tilesets/water.png" width="768" height="640"/>
+ </tileset>
+ <tileset firstgid="961" name="fighters" tilewidth="32" tileheight="32">
+  <image source="../fighters/fighters.png" width="384" height="256"/>
+ </tileset>
+ <layer name="ground" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJyTYmBgkBrFo3gUj+JRPIpH8SgexVTDADkCPPE=
+  </data>
+ </layer>
+ <objectgroup name="fighters" width="30" height="20">
+  <object gid="961" x="192" y="128"/>
+  <object gid="1015" x="288" y="256"/>
+  <object gid="1022" x="160" y="192"/>
+ </objectgroup>
+</map>
