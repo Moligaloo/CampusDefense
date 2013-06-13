@@ -23,6 +23,17 @@ for direction in pairs(face2number) do
 end
 
 local actiondt = 0.15 -- the larger the slower
+local fighterMatrix = {}
+
+function Fighter.get(pos)
+	local index = pos.y * htiles + pos.x
+	return fighterMatrix[index]
+end
+
+function Fighter.set(pos, fighter)
+	local index = pos.y * htiles + pos.x
+	fighterMatrix[index] = fighter
+end
 
 function Fighter:initialize(map, info)
 	self.map = map
@@ -134,7 +145,15 @@ function Fighter:turn(face)
 end
 
 function Fighter:setPos(pos)
+	if self.pos then
+		Fighter.set(pos, nil)
+	end
+
 	self.pos = pos
+	
+	if self.pos then
+		Fighter.set(pos, self)
+	end
 end
 
 function Fighter:mouseIn(x,y)

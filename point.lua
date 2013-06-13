@@ -106,12 +106,16 @@ function Point:findPath(dest)
 		end
 
 		local toclose = table.remove(openlist, closeindex)
+		if toclose == nil then
+			break
+		end
+		
 		table.insert(closelist, toclose)
 
 		-- put toclose's neighbors into openlist
 		for _, offset in ipairs(neighbor_offsets) do
 			local neighbor = toclose + offset
-			if neighbor:inRange() and not neighbor:samePointInList(closelist) then
+			if neighbor:inRange() and not neighbor:samePointInList(closelist) and Fighter.get(neighbor) == nil then
 				-- check neighbor is in openlist
 				neighbor.prev = toclose
 				local existed = neighbor:samePointInList(openlist)
