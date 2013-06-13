@@ -95,24 +95,22 @@ function Fighter:update(dt)
 			self:updateClip()
 		end
 
-		local offset = faceOffsets[self.face]
-		local speed = 200
-		self.offset = self.offset + (offset * dt * speed) 
-
 		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
 			self.offset = Point(0, 0)
 			self.face = table.remove(self.path, 1)
-			self.pos = self.pos + offset
+			self.pos = self.pos + faceOffsets[self.face]
 			self:updateClip()
 
 			if not next(self.path) then
 				self.path = nil
 				self.isMoving = false
 			end
+		else
+			local offset = faceOffsets[self.face]
+			local speed = 200
+			self.offset = self.offset + (offset * dt * speed) 
 		end
-	end
-
-	if self.selected then
+	elseif self.selected then
 		local mouse_x = math.floor(love.mouse.getX() / tilewidth)
 		local mouse_y = math.floor(love.mouse.getY() / tileheight)
 		local dest = Point(mouse_x, mouse_y)
