@@ -124,7 +124,12 @@ end
 function Fighter:draw()
 	if self.selected then
 		love.graphics.setColor(0xFF, 0x00, 0x00)
-		love.graphics.rectangle('line', self:rect())
+		local x, y, w, h = self:rect()
+		x = x - 2 
+		y = y - 2
+		w = w + 4
+		h = w + 4
+		love.graphics.rectangle('line', x, y, w, h)
 		love.graphics.reset()
 	end
 
@@ -136,7 +141,21 @@ function Fighter:draw()
 			love.graphics.draw(directionimages[direction], p.x * tilewidth, p.y * tileheight)
 		end
 	end
+
+	-- draw fighter itself
 	love.graphics.drawq(self.image, self.quad, self:origin())
+
+	-- draw hp slot
+	do
+		local width = (self.width - 2) * hp / 10
+		local height = 5
+		local x = self.pos.x * self.width + 1
+		local y = (self.pos.y +1) * self.height
+		
+		love.graphics.setColor(0xFF, 0x00, 0x00, 0x80)
+		love.graphics.rectangle('fill', x, y, width, height)
+		love.graphics.reset()
+	end
 end
 
 function Fighter:turn(face)
@@ -150,7 +169,7 @@ function Fighter:setPos(pos)
 	end
 
 	self.pos = pos
-	
+
 	if self.pos then
 		Fighter.set(pos, self)
 	end
