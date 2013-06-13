@@ -48,13 +48,30 @@ function Point:inRange()
 end
 
 function Point:__add(other)
-	local x = self.x + other.x
-	local y = self.y + other.y
-	return Point(x, y)
+	return Point(self.x + other.x, self.y + other.y)
+end
+
+function Point:__sub(other)
+	return Point(self.x - other.x, self.y - other.y)
+end
+
+function Point:__unm()
+	return Point(-self.x, -self.y)
 end
 
 function Point:__mul(factor)
 	return Point(self.x * factor, self.y * factor)
+end
+
+function Point:__div(divisor)
+	if divisor == 0 then
+		error("Divisor can not be zero!")
+	end
+	return Point(self.x / divisor, self.y / divisor)
+end
+
+function Point:__len()
+	return self.x * self.x + self.y * self.y
 end
 
 function Point:getF(dest)
