@@ -147,7 +147,7 @@ function Fighter:draw()
 
 	-- draw hp slot
 	do
-		local width = (self.width - 2) * hp / 10
+		local width = (self.width - 2) * self.hp / 10
 		local height = 5
 		local x = self.pos.x * self.width + 1
 		local y = (self.pos.y +1) * self.height

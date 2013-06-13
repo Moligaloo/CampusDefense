@@ -115,7 +115,8 @@ function Point:findPath(dest)
 		-- put toclose's neighbors into openlist
 		for _, offset in ipairs(neighbor_offsets) do
 			local neighbor = toclose + offset
-			if neighbor:inRange() and not neighbor:samePointInList(closelist) and Fighter.get(neighbor) == nil then
+			if neighbor:inRange() and not neighbor:samePointInList(closelist) 
+				and Fighter.get(neighbor) == nil and not Ground.isBlocked(neighbor) then
 				-- check neighbor is in openlist
 				neighbor.prev = toclose
 				local existed = neighbor:samePointInList(openlist)

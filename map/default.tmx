@@ -35,13 +35,29 @@
  </tileset>
  <tileset firstgid="481" name="water" tilewidth="32" tileheight="32">
   <image source="../tilesets/water.png" width="768" height="640"/>
+  <terraintypes>
+   <terrain name="浅海" tile="25"/>
+  </terraintypes>
+  <tile id="0" terrain=",,,0"/>
+  <tile id="1" terrain=",,0,0"/>
+  <tile id="2" terrain=",,0,"/>
+  <tile id="24" terrain=",0,,0"/>
+  <tile id="25" terrain="0,0,0,0"/>
+  <tile id="26" terrain="0,,0,"/>
+  <tile id="48" terrain=",0,,"/>
+  <tile id="49" terrain="0,0,,"/>
+  <tile id="50" terrain="0,,,"/>
+  <tile id="72" terrain="0,0,0,"/>
+  <tile id="73" terrain="0,0,,0"/>
+  <tile id="96" terrain="0,,0,0"/>
+  <tile id="97" terrain=",0,0,0"/>
  </tileset>
  <tileset firstgid="961" name="fighters" tilewidth="32" tileheight="32">
   <image source="../fighters/fighters.png" width="384" height="256"/>
  </tileset>
  <layer name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJyTYmBgkBrFo3gUj+JRPIpH8SgexVTDADkCPPE=
+   eJztzTESABAMBMBLfoAu//8YXoGGOqONwlyx9RoAo6sqQHO6xL/jHNNZfL95kwLZKRr/EhHROxsAGVab
   </data>
  </layer>
  <objectgroup name="fighters" width="30" height="20">
