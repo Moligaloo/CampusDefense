@@ -50,6 +50,7 @@ function Fighter:initialize(map, info)
 
 	self.frame = math.floor((x - self.fighterRect.x) / self.width)
 	self.face = number2face[math.floor((y - self.fighterRect.y) / self.height)]
+	self.framestep = 1
 	self.quad = tile.quad
 
 	self.dx = 0
@@ -68,9 +69,9 @@ function Fighter:update(dt)
 	if self.keeptime >= actiondt then
 		self.keeptime = self.keeptime - actiondt
 
-		self.frame = self.frame + 1
-		if self.frame >= framecount then
-			self.frame = 0
+		self.frame = self.frame + self.framestep
+		if self.frame == framecount-1 or self.frame == 0 then
+			self.framestep = - self.framestep
 		end
 
 		self:updateClip()
