@@ -36,21 +36,25 @@ function Point:direction(other)
 	end
 end
 
-local neighbor_offsets = {
-	{1, 0}, -- east
-	{0, 1}, -- south
-	{-1, 0}, -- west
-	{0, -1} -- north
+local neighborOffset = {
+	Point(1, 0), -- east
+	Point(0, 1), -- south
+	Point(-1, 0), -- west
+	Point(0, -1) -- north
 }
 
 function Point:inRange()
 	return self.x >= 0 and self.x < htiles and self.y >= 0 and self.y < vtiles
 end
 
-function Point:__add(offset)
-	local x = self.x + offset[1]
-	local y = self.y + offset[2]
+function Point:__add(other)
+	local x = self.x + other.x
+	local y = self.y + other.y
 	return Point(x, y)
+end
+
+function Point:__mul(factor)
+	return Point(self.x * factor, self.y * factor)
 end
 
 function Point:getF(dest)
@@ -113,7 +117,7 @@ function Point:findPath(dest)
 		table.insert(closelist, toclose)
 
 		-- put toclose's neighbors into openlist
-		for _, offset in ipairs(neighbor_offsets) do
+		for _, offset in ipairs(neighborOffset) do
 			local neighbor = toclose + offset
 			if neighbor:inRange() and not neighbor:samePointInList(closelist) 
 				and Fighter.get(neighbor) == nil and not Ground.isBlocked(neighbor) then

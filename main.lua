@@ -58,6 +58,11 @@ end
 function love.keypressed(key, unicode)
 	if key == 'g' then
 		showgrid = not showgrid
+	elseif key == 'escape' then
+		if selected then
+			selected.selected = false
+			selected = nil
+		end
 	end
 end
 
@@ -78,6 +83,8 @@ function love.mousepressed(x, y, button)
 			end
 			newselected.selected = true
 			selected = newselected
+		elseif selected and selected.path then
+			selected:startMove()
 		end
 	end
 end

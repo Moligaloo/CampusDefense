@@ -5,8 +5,8 @@ Fighter = class 'Fighter'
 
 local face2number = {
 	south = 0,
-	east = 1,
-	west = 2,
+	west = 1,
+	east = 2,
 	north = 3
 }
 
@@ -64,8 +64,7 @@ function Fighter:initialize(map, info)
 	self.framestep = 1
 	self.quad = tile.quad
 
-	self.dx = 0
-	self.dy = 0
+	self.offset = Point(0,0)
 	self.keeptime = 0
 	self.selected = false
 	self.hp = 10
@@ -75,17 +74,42 @@ function Fighter:initialize(map, info)
 	self:setPos(Point(posX, posY))
 end
 
-function Fighter:update(dt)
-	self.keeptime = self.keeptime + dt
-	if self.keeptime >= actiondt then
-		self.keeptime = self.keeptime - actiondt
+local faceOffsets = {
+	south = Point(0, 1),
+	north = Point(0, -1),
+	east = Point(1, 0),
+	west = Point(-1, 0)
+}
 
-		self.frame = self.frame + self.framestep
-		if self.frame == framecount-1 or self.frame == 0 then
-			self.framestep = - self.framestep
+function Fighter:update(dt)
+	if self.isMoving then
+		self.keeptime = self.keeptime + dt
+		if self.keeptime >= actiondt then
+			self.keeptime = self.keeptime - actiondt
+
+			self.frame = self.frame + self.framestep
+			if self.frame == framecount-1 or self.frame == 0 then
+				self.framestep = - self.framestep
+			end
+
+			self:updateClip()
 		end
 
-		self:updateClip()
+		local offset = faceOffsets[self.face]
+		local speed = 200
+		self.offset = self.offset + (offset * dt * speed) 
+
+		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
+			self.offset = Point(0, 0)
+			self.face = table.remove(self.path, 1)
+			self.pos = self.pos + offset
+			self:updateClip()
+
+			if not next(self.path) then
+				self.path = nil
+				self.isMoving = false
+			end
+		end
 	end
 
 	if self.selected then
@@ -99,6 +123,13 @@ function Fighter:update(dt)
 	end
 end
 
+function Fighter:startMove()
+	if self.path then
+		self.face = self.path[1]
+		self.isMoving = true
+	end
+end
+
 function Fighter:updateClip()
 	local x = self.frame  * self.width + self.fighterRect.x
 	local y = face2number[self.face] * self.height + self.fighterRect.y
@@ -106,8 +137,8 @@ function Fighter:updateClip()
 end
 
 function Fighter:origin()
-	local x = self.pos.x * tilewidth + (tilewidth-self.width)/2 + self.dx 
-	local y = self.pos.y * tileheight + tileheight - self.height + self.dy
+	local x = self.pos.x * tilewidth + (tilewidth-self.width)/2 + self.offset.x
+	local y = self.pos.y * tileheight + tileheight - self.height + self.offset.y
 	return x,y
 end
 
@@ -149,8 +180,8 @@ function Fighter:draw()
 	do
 		local width = (self.width - 2) * self.hp / 10
 		local height = 5
-		local x = self.pos.x * self.width + 1
-		local y = (self.pos.y +1) * self.height
+		local x = self.pos.x * self.width + 1 + self.offset.x
+		local y = (self.pos.y +1) * self.height + self.offset.y
 		
 		love.graphics.setColor(0xFF, 0x00, 0x00, 0x80)
 		love.graphics.rectangle('fill', x, y, width, height)
