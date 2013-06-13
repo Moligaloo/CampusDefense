@@ -55,14 +55,18 @@ function love.draw()
 	end
 end
 
+local function unselect()
+	if selected then
+		selected.selected = false
+		selected = nil
+	end
+end
+
 function love.keypressed(key, unicode)
 	if key == 'g' then
 		showgrid = not showgrid
 	elseif key == 'escape' then
-		if selected then
-			selected.selected = false
-			selected = nil
-		end
+		unselect()
 	end
 end
 
@@ -75,6 +79,11 @@ local function findselected(x, y)
 end
 
 function love.mousepressed(x, y, button)
+	if button == 'r' then
+		unselect()
+		return
+	end
+
 	if gamemode == 'free' then
 		local newselected = findselected(x, y)
 		if newselected then
