@@ -79,6 +79,7 @@ function Fighter:initialize(map, info)
 	self.selected = false
 	self.hp = info.properties.hp or 10
 	self.maxhp = info.properties.maxhp or 10
+	self.range = 5
 
 	local posX = math.floor(info.x / self.width)
 	local posY = math.floor(info.y / self.height)
@@ -173,15 +174,32 @@ function Fighter:draw()
 		love.graphics.reset()
 	end
 
-	if self.selected then
-		if self.path and not self.isMoving then
+	if self.selected and not self.isMoving then
+		love.graphics.setColor(0x00, 0xFF, 0x00, 0x80)
+
+		local beginY = math.max(0, self.pos.y - self.range)
+		local endY = math.min(vtiles-1, self.pos.y + self.range)
+
+		for y = beginY, endY do
+			local diff = self.range - math.abs(self.pos.y - y)
+			local beginX = math.max(0, self.pos.x - diff)
+			local endX = math.min(htiles-1, self.pos.x + diff)
+
+			for x = beginX, endX do
+				if not Fighter.isBlocked(Point(x, y)) then
+					love.graphics.rectangle('fill', x * tilewidth, y * tileheight, tilewidth, tileheight)
+				end
+			end
+		end
+
+		love.graphics.reset()
+		
+		if self.path then
 			local p = Point(self.pos.x, self.pos.y)
 			for _, direction in ipairs(self.path) do
 				p:move(direction)
 				love.graphics.draw(directionimages[direction], p.x * tilewidth, p.y * tileheight)
 			end
-		else
-			-- TODO: draw reachable area
 		end
 	end
 
