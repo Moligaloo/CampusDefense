@@ -93,6 +93,10 @@ local faceOffsets = {
 	west = Point(-1, 0)
 }
 
+function Fighter:inRange(dest)
+	return self.pos:manhattanLength(dest) <= self.range
+end
+
 function Fighter:update(dt)
 	if self.isMoving then
 		self.keeptime = self.keeptime + dt
@@ -126,7 +130,8 @@ function Fighter:update(dt)
 		local mouse_x = math.floor(love.mouse.getX() / tilewidth)
 		local mouse_y = math.floor(love.mouse.getY() / tileheight)
 		local dest = Point(mouse_x, mouse_y)
-		if dest:inRange() and (self.dest == nil or (self.dest.x ~= mouse_x or self.dest.y ~= mouse_y)) then
+		if dest:onScreen() and self:inRange(dest) 
+			and (self.dest == nil or (self.dest.x ~= mouse_x or self.dest.y ~= mouse_y)) then
 			self.dest = dest
 			self.path = self.pos:findPath(self.dest)
 		end

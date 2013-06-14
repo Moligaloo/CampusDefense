@@ -43,7 +43,7 @@ local neighborOffset = {
 	Point(0, -1) -- north
 }
 
-function Point:inRange()
+function Point:onScreen()
 	return self.x >= 0 and self.x < htiles and self.y >= 0 and self.y < vtiles
 end
 
@@ -136,7 +136,7 @@ function Point:findPath(dest)
 		-- put toclose's neighbors into openlist
 		for _, offset in ipairs(neighborOffset) do
 			local neighbor = toclose + offset
-			if neighbor:inRange() and not neighbor:samePointInList(closelist) 
+			if neighbor:onScreen() and not neighbor:samePointInList(closelist) 
 				and not Fighter.isBlocked(neighbor) then
 				-- check neighbor is in openlist
 				neighbor.prev = toclose
