@@ -57,7 +57,7 @@
  </tileset>
  <layer name="ground" width="30" height="20">
   <data encoding="base64" compression="zlib">
-   eJztzTESABAMBMBLfoAu//8YXoGGOqONwlyx9RoAo6sqQHO6xL/jHNNZfL95kwLZKRr/EhHROxsAGVab
+   eJztzaENACAMBMBvNwBc918MmAIwoBtsk4oXp88AGH11AYYzJf5d79jO4cuXL9+Eb1GgOk3jX6LsLnwQdj8=
   </data>
  </layer>
  <objectgroup name="fighters" width="30" height="20">

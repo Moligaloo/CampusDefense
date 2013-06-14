@@ -9,6 +9,7 @@ function love.conf( t )
 	t.screen.height = tileheight * vtiles
 	t.title = "校园保卫战"
 	t.author = "moligaloo"
+	t.url = "http://github.com/moligaloo/CampusDefense"
 
 	t.modules.joystick = false
 	t.modules.physics = false

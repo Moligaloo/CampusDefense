@@ -98,12 +98,11 @@ function Fighter:update(dt)
 
 		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
 			self.offset = Point(0, 0)
-			self.pos = self.pos + faceOffsets[self.path[1]]
-
-			self.face = table.remove(self.path, 1)
-			self:updateClip()
-
-			if not next(self.path) then
+			self:setPos(self.pos + faceOffsets[self.face])
+			if next(self.path) then				
+				self:turn(table.remove(self.path, 1))
+				self:updateClip()
+			else
 				self.path = nil
 				self.isMoving = false
 			end
@@ -125,7 +124,7 @@ end
 
 function Fighter:startMove()
 	if self.path and not self.isMoving then
-		self.face = self.path[1]
+		self:turn(table.remove(self.path, 1))
 		self.isMoving = true
 	end
 end
@@ -165,7 +164,7 @@ function Fighter:draw()
 	end
 
 	-- draw path
-	if self.selected and self.path then
+	if self.selected and self.path and not self.isMoving then
 		local p = Point(self.pos.x, self.pos.y)
 		for _, direction in ipairs(self.path) do
 			p:move(direction)
@@ -192,19 +191,21 @@ function Fighter:draw()
 end
 
 function Fighter:turn(face)
-	self.face = face
-	self:updateClip()
+	if self.face ~= face then
+		self.face = face
+		self:updateClip()
+	end
 end
 
 function Fighter:setPos(pos)
 	if self.pos then
-		Fighter.set(pos, nil)
+		Fighter.set(self.pos, nil)
 	end
 
 	self.pos = pos
 
 	if self.pos then
-		Fighter.set(pos, self)
+		Fighter.set(self.pos, self)
 	end
 end
 
