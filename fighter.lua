@@ -35,6 +35,16 @@ function Fighter.set(pos, fighter)
 	fighterMatrix[index] = fighter
 end
 
+local ground = nil
+
+function Fighter.setGround(g)
+	ground = g
+end
+
+function Fighter.isBlocked(pos)
+	return Fighter.get(pos) or ground(pos.x, pos.y).tileset.name == 'water'
+end
+
 function Fighter:initialize(map, info)
 	self.map = map
 	local gid = info.gid
@@ -163,12 +173,15 @@ function Fighter:draw()
 		love.graphics.reset()
 	end
 
-	-- draw path
-	if self.selected and self.path and not self.isMoving then
-		local p = Point(self.pos.x, self.pos.y)
-		for _, direction in ipairs(self.path) do
-			p:move(direction)
-			love.graphics.draw(directionimages[direction], p.x * tilewidth, p.y * tileheight)
+	if self.selected then
+		if self.path and not self.isMoving then
+			local p = Point(self.pos.x, self.pos.y)
+			for _, direction in ipairs(self.path) do
+				p:move(direction)
+				love.graphics.draw(directionimages[direction], p.x * tilewidth, p.y * tileheight)
+			end
+		else
+			-- TODO: draw reachable area
 		end
 	end
 

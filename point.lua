@@ -137,7 +137,7 @@ function Point:findPath(dest)
 		for _, offset in ipairs(neighborOffset) do
 			local neighbor = toclose + offset
 			if neighbor:inRange() and not neighbor:samePointInList(closelist) 
-				and Fighter.get(neighbor) == nil and not Ground.isBlocked(neighbor) then
+				and not Fighter.isBlocked(neighbor) then
 				-- check neighbor is in openlist
 				neighbor.prev = toclose
 				local existed = neighbor:samePointInList(openlist)

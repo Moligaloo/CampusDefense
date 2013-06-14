@@ -1,6 +1,5 @@
 require 'middleclass'
 require 'fighter'
-require 'ground'
 
 gamemode = 'free'
 
@@ -30,7 +29,7 @@ function love.load()
 	map = loader.load 'default.tmx'
 
 	map.drawObjects = false
-	Ground.setInstance(map 'ground')
+	Fighter.setGround(map 'ground')
 
 	for _, info in pairs(map('fighters').objects) do
 		table.insert(fighters, Fighter(map, info))
