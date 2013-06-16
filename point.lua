@@ -157,11 +157,15 @@ function Point:findPath(dest, fighter)
 		if toclose:equals(dest) then
 			local points = {}
 			local p = toclose
-			while p.prev do
-				table.insert(points, p)
+			while true do
+				if p then
+					table.insert(points, p)
+				else
+					break
+				end
+
 				p = p.prev
 			end
-			table.insert(points, self)
 
 			local path = {}
 			for i=#points, 2, -1 do

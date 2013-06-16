@@ -1,28 +1,14 @@
 require 'middleclass'
 require 'point'
+require 'animation'
 
 Fighter = class 'Fighter'
 
-local face2number = {
-	south = 0,
-	west = 1,
-	east = 2,
-	north = 3
-}
-
-local number2face = {}
-for k, v in pairs(face2number) do
-	number2face[v] = k
-end
-
-local framecount = 3
-
 local directionimages = {}
-for direction in pairs(face2number) do
+for _, direction in ipairs {'east', 'south', 'west', 'north'} do
 	directionimages[direction] = love.graphics.newImage(("misc/%s.png"):format(direction))
 end
 
-local actiondt = 0.15 -- the larger the slower
 local fighterMatrix = {}
 
 function Fighter.get(pos)
@@ -54,13 +40,17 @@ function Fighter:isBlockedAt(pos)
 	return fighter and fighter.camp ~= self.camp
 end
 
+local number2face = {
+	[0] = 'south',
+	[1] = 'west',
+	[2] = 'east',
+	[3] = 'north'
+}
+
 function Fighter:initialize(map, info)
-	self.map = map
-	local gid = info.gid
-	local tile = map.tiles[gid]
+	local tile = map.tiles[info.gid]
 	local tileset = tile.tileset
 
-	self.info = info
 	self.image = tileset.image
 	self.width = tileset.tileWidth
 	self.height = tileset.tileHeight
@@ -70,21 +60,12 @@ function Fighter:initialize(map, info)
 	local fighterHeight = tileset.tileHeight * 4
 	local column = math.floor(x / fighterWidth)
 	local row = math.floor(y / fighterHeight)
+	local fighterOrigin = Point(column * fighterWidth, row * fighterHeight)
 
-	self.fighterRect = {
-		x = column * fighterWidth,
-		y = row * fighterHeight,
-		w = fighterWidth,
-		h = fighterHeight
-	}
-
-	self.frame = math.floor((x - self.fighterRect.x) / self.width)
-	self.face = number2face[math.floor((y - self.fighterRect.y) / self.height)]
-	self.framestep = 1
+	self.face = number2face[math.floor((y - fighterOrigin.y) / self.height)]
 	self.quad = tile.quad
 
 	self.offset = Point(0,0)
-	self.keeptime = 0
 	self.selected = false
 	self.hp = info.properties.hp or 10
 	self.maxhp = info.properties.maxhp or 10
@@ -95,6 +76,10 @@ function Fighter:initialize(map, info)
 	self:setPos(Point(posX, posY))
 
 	Fighter.set(self.pos, self)
+
+	self.animations = {}
+
+	self:addAnimation(WalkAnimation(self, fighterOrigin)):start()
 end
 
 local faceOffsets = {
@@ -109,25 +94,18 @@ function Fighter:inRange(dest)
 end
 
 function Fighter:update(dt)
-	if self.isMoving then
-		self.keeptime = self.keeptime + dt
-		if self.keeptime >= actiondt then
-			self.keeptime = self.keeptime - actiondt
-
-			self.frame = self.frame + self.framestep
-			if self.frame == framecount-1 or self.frame == 0 then
-				self.framestep = - self.framestep
-			end
-
-			self:updateClip()
+	for name, animation in pairs(self.animations) do
+		if animation:update(dt) == Animation.DONE then
+			self.animations[name] = nil
 		end
+	end 
 
+	if self.isMoving then
 		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
 			self.offset = Point(0, 0)
 			self:setPos(self.pos + faceOffsets[self.face])
 			if next(self.path) then				
 				self:turn(table.remove(self.path, 1))
-				self:updateClip()
 			else
 				self.path = nil
 				self.isMoving = false
@@ -156,12 +134,6 @@ function Fighter:startMove()
 		self.isMoving = true
 		Fighter.set(self.pos, nil)
 	end
-end
-
-function Fighter:updateClip()
-	local x = self.frame  * self.width + self.fighterRect.x
-	local y = face2number[self.face] * self.height + self.fighterRect.y
-	self.quad = love.graphics.newQuad(x, y, self.width, self.height, self.image:getWidth(), self.image:getHeight())
 end
 
 function Fighter:origin()
@@ -236,14 +208,22 @@ function Fighter:draw()
 		love.graphics.rectangle('fill', x, y, width, height)
 		love.graphics.reset()
 
-		love.graphics.printf(("%d/%d"):format(self.hp, self.maxhp), x, y, width, 'right')
+		--love.graphics.printf(("%d/%d"):format(self.hp, self.maxhp), x, y, width, 'right')
 	end
+end
+
+function Fighter:addAnimation(animation)
+	assert(self.animations[animation.name] == nil, 
+		("An animation named %s already exists"):format(animation.name))
+
+	self.animations[animation.name] = animation
+
+	return animation
 end
 
 function Fighter:turn(face)
 	if self.face ~= face then
 		self.face = face
-		self:updateClip()
 	end
 end
 
