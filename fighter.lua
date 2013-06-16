@@ -41,8 +41,17 @@ function Fighter.setGround(g)
 	ground = g
 end
 
-function Fighter.isBlocked(pos)
-	return Fighter.get(pos) or ground(pos.x, pos.y).tileset.name == 'water'
+function Fighter.groundIsBlocked(pos)
+	return ground(pos.x, pos.y).tileset.name == 'water'
+end
+
+function Fighter:isBlockedAt(pos)
+	if Fighter.groundIsBlocked(pos) then
+		return true
+	end
+
+	local fighter = Fighter.get(pos)
+	return fighter and fighter.camp ~= self.camp
 end
 
 function Fighter:initialize(map, info)
@@ -84,6 +93,8 @@ function Fighter:initialize(map, info)
 	local posX = math.floor(info.x / self.width)
 	local posY = math.floor(info.y / self.height)
 	self:setPos(Point(posX, posY))
+
+	Fighter.set(self.pos, self)
 end
 
 local faceOffsets = {
@@ -120,6 +131,7 @@ function Fighter:update(dt)
 			else
 				self.path = nil
 				self.isMoving = false
+				Fighter.set(self.pos, self)
 			end
 		else
 			local offset = faceOffsets[self.face]
@@ -133,7 +145,7 @@ function Fighter:update(dt)
 		if dest:onScreen() and self:inRange(dest) 
 			and (self.dest == nil or (self.dest.x ~= mouse_x or self.dest.y ~= mouse_y)) then
 			self.dest = dest
-			self.path = self.pos:findPath(self.dest)
+			self.path = self.pos:findPath(self.dest, self)
 		end
 	end
 end
@@ -142,6 +154,7 @@ function Fighter:startMove()
 	if self.path and not self.isMoving then
 		self:turn(table.remove(self.path, 1))
 		self.isMoving = true
+		Fighter.set(self.pos, nil)
 	end
 end
 
@@ -191,7 +204,8 @@ function Fighter:draw()
 			local endX = math.min(htiles-1, self.pos.x + diff)
 
 			for x = beginX, endX do
-				if not Fighter.isBlocked(Point(x, y)) then
+				local pos = Point(x, y)
+ 				if not Fighter.groundIsBlocked(pos) and Fighter.get(pos) == nil then
 					love.graphics.rectangle('fill', x * tilewidth, y * tileheight, tilewidth, tileheight)
 				end
 			end
@@ -234,15 +248,7 @@ function Fighter:turn(face)
 end
 
 function Fighter:setPos(pos)
-	if self.pos then
-		Fighter.set(self.pos, nil)
-	end
-
 	self.pos = pos
-
-	if self.pos then
-		Fighter.set(self.pos, self)
-	end
 end
 
 function Fighter:mouseIn(x,y)

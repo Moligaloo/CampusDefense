@@ -105,7 +105,7 @@ function Point:move(direction)
 	self.y = self.y + offset[2]
 end
 
-function Point:findPath(dest)
+function Point:findPath(dest, fighter)
 	if self:equals(dest) then
 		return nil
 	end
@@ -137,7 +137,7 @@ function Point:findPath(dest)
 		for _, offset in ipairs(neighborOffset) do
 			local neighbor = toclose + offset
 			if neighbor:onScreen() and not neighbor:samePointInList(closelist) 
-				and not Fighter.isBlocked(neighbor) then
+				and not fighter:isBlockedAt(neighbor) then
 				-- check neighbor is in openlist
 				neighbor.prev = toclose
 				local existed = neighbor:samePointInList(openlist)
