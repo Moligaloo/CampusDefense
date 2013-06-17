@@ -125,7 +125,7 @@ end
 function PathUpdaterAnimation:update(dt)
 	local fighter = self.fighter
 
-	if not fighter:isMoving() and fighter.selected then
+	if not fighter:isMoving() and fighter:isSelected() then
 		local mouseX = math.floor(love.mouse.getX() / tilewidth)
 		local mouseY = math.floor(love.mouse.getY() / tileheight)
 		local dest = Point(mouseX, mouseY)

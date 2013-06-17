@@ -6,7 +6,6 @@ gamemode = 'free'
 local map = nil -- stores the map data
 local showgrid = false 
 local fighters = {}
-local selected = nil
 
 local function drawgrid()
 	love.graphics.setColor(0xFF, 0xFF, 0xFF)
@@ -54,18 +53,11 @@ function love.draw()
 	end
 end
 
-local function unselect()
-	if selected then
-		selected.selected = false
-		selected = nil
-	end
-end
-
 function love.keypressed(key, unicode)
 	if key == 'g' then
 		showgrid = not showgrid
 	elseif key == 'escape' then
-		unselect()
+		Fighter.setSelected(nil)
 	end
 end
 
@@ -79,20 +71,17 @@ end
 
 function love.mousepressed(x, y, button)
 	if button == 'r' then
-		unselect()
+		Fighter.setSelected(nil)
 		return
 	end
 
 	if gamemode == 'free' then
-		local newselected = findselected(x, y)
-		if newselected then
-			if selected then
-				selected.selected = false
-			end
-			newselected.selected = true
-			selected = newselected
-		elseif selected and selected.path then
-			selected:startMove()
+		local selected = findselected(x, y)
+		local oldSelected = Fighter.getSelected()
+		if selected then
+			Fighter.setSelected(selected)
+		elseif oldSelected and oldSelected.path then
+			oldSelected:startMove()
 		end
 	end
 end

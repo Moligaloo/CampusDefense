@@ -21,6 +21,24 @@ function Fighter.set(pos, fighter)
 	fighterMatrix[index] = fighter
 end
 
+--
+
+local selectedFighter = nil
+
+function Fighter.getSelected()
+	return selectedFighter
+end
+
+function Fighter.setSelected(fighter)
+	selectedFighter = fighter
+end
+
+function Fighter:isSelected()
+	return self == selectedFighter
+end
+
+--
+
 local ground = nil
 
 function Fighter.setGround(g)
@@ -67,7 +85,6 @@ function Fighter:initialize(info)
 	self.quad = tile.quad
 
 	self.offset = Point(0,0)
-	self.selected = false
 	self.hp = info.properties.hp or 10
 	self.maxhp = info.properties.maxhp or 10
 	self.range = 5
@@ -130,7 +147,7 @@ function Fighter:rect()
 end
 
 function Fighter:draw()
-	if self.selected then
+	if self:isSelected() then
 		love.graphics.setColor(0xFF, 0x00, 0x00)
 		local x, y, w, h = self:rect()
 		x = x - 2 
@@ -141,7 +158,7 @@ function Fighter:draw()
 		love.graphics.reset()
 	end
 
-	if self.selected and not self:isMoving() then
+	if self:isSelected() and not self:isMoving() then
 		love.graphics.setColor(0x00, 0xFF, 0x00, 0x80)
 
 		local beginY = math.max(0, self.pos.y - self.range)
@@ -163,9 +180,9 @@ function Fighter:draw()
 		love.graphics.reset()
 		
 		if self.path then
-			for i=2, #self.path do
-				local from = self.path[i-1]
-				local to = self.path[i]
+			for i=1, #self.path-1 do
+				local from = self.path[i]
+				local to = self.path[i+1]
 				local direction = from:direction(to)
 				love.graphics.draw(directionimages[direction], to.x * tilewidth, to.y * tileheight)
 			end
