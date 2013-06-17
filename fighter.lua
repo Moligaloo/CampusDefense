@@ -47,7 +47,8 @@ local number2face = {
 	[3] = 'north'
 }
 
-function Fighter:initialize(map, info)
+function Fighter:initialize(info)
+	local map = ground.map
 	local tile = map.tiles[info.gid]
 	local tileset = tile.tileset
 

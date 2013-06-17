@@ -32,7 +32,7 @@ function love.load()
 	Fighter.setGround(map 'ground')
 
 	for _, info in pairs(map('fighters').objects) do
-		table.insert(fighters, Fighter(map, info))
+		table.insert(fighters, Fighter(info))
 	end
 end
 
