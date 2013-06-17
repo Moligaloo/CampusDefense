@@ -194,13 +194,21 @@ function Fighter:draw()
 
 	-- draw hp slot
 	do
-		local width = (self.width - 2) * self.hp / self.maxhp
+		local totalWidth = self.width - 2
+		local hpWidth = totalWidth * self.hp / self.maxhp
 		local height = 5
 		local x = self.pos.x * self.width + 1 + self.offset.x
 		local y = (self.pos.y +1) * self.height + self.offset.y
 		
 		love.graphics.setColor(0xFF, 0x00, 0x00, 0x80)
-		love.graphics.rectangle('fill', x, y, width, height)
+		love.graphics.rectangle('fill', x, y, hpWidth, height)
+		
+		love.graphics.setColor(0x00, 0x00, 0x00)
+		love.graphics.rectangle('fill', x + hpWidth, y, totalWidth - hpWidth, height)
+
+		love.graphics.setColor(0xFF, 0xFF, 0xFF)
+		love.graphics.setLineWidth(1)
+		love.graphics.rectangle('line', x-1, y-1, totalWidth+2, height+2)
 		love.graphics.reset()
 
 		--love.graphics.printf(("%d/%d"):format(self.hp, self.maxhp), x, y, width, 'right')
