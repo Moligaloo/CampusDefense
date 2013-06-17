@@ -9,11 +9,8 @@ function Animation:initialize(name)
 	self.name = name
 end
 
-function Animation:start()
-	-- do nothing
-end
+-- WalkAnimation
 
--- 
 WalkAnimation = Animation:subclass 'WalkAnimation'
 
 WalkAnimation.FRAMES = {0, 1, 2, 1}
@@ -30,12 +27,9 @@ function WalkAnimation:initialize(fighter, fighterOrigin)
 
 	self.fighter = fighter
 	self.fighterOrigin = fighterOrigin
-end
-
-function WalkAnimation:start()
 	self.elapsed = 0
 	self.frame = 0
-	self.face = self.fighter.face
+	self.face = fighter.face
 end
 
 function WalkAnimation:update(dt)
@@ -69,3 +63,58 @@ function WalkAnimation:update(dt)
 
 	return Animation.RUNNING
 end
+
+-- Move Animation
+
+MoveAnimation = Animation:subclass 'MoveAnimation'
+MoveAnimation.SPEED = 200
+MoveAnimation.STEP_TIME = tilewidth / MoveAnimation.SPEED
+
+function MoveAnimation:initialize(fighter)
+	Animation.initialize(self, 'move')
+
+	self.fighter = fighter
+	self.elapsed = 0
+
+	fighter.isMoving = true
+end
+
+function MoveAnimation:update(dt)
+	self.elapsed = self.elapsed + dt
+	local step = math.ceil(self.elapsed / MoveAnimation.STEP_TIME)
+
+	local fighter = self.fighter
+
+	if step >= #fighter.path then
+		fighter.isMoving = false
+
+		Fighter.set(fighter.pos, nil)
+		fighter.pos = fighter.path[#fighter.path]
+		Fighter.set(fighter.pos, fighter)
+		
+		fighter.path = nil
+		fighter.offset:reset()
+
+		return Animation.DONE
+	end
+
+	local from = fighter.path[step]
+	local to = fighter.path[step + 1]
+
+	if self.step ~= step then
+		self.step = step
+		fighter.face = from:direction(to)
+	end
+
+	local smallElapsed = self.elapsed - MoveAnimation.STEP_TIME * (step - 1)
+	local smallOffset = (to - from) * smallElapsed * MoveAnimation.SPEED
+
+	local x = (from.x - fighter.pos.x) * tilewidth + smallOffset.x
+	local y = (from.y - fighter.pos.y) * tileheight + smallOffset.y
+
+	fighter.offset:set(x,y)
+
+	return Animation.RUNNING
+end
+
+

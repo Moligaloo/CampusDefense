@@ -79,7 +79,7 @@ function Fighter:initialize(map, info)
 
 	self.animations = {}
 
-	self:addAnimation(WalkAnimation(self, fighterOrigin)):start()
+	self:addAnimation(WalkAnimation(self, fighterOrigin))
 end
 
 local faceOffsets = {
@@ -100,23 +100,7 @@ function Fighter:update(dt)
 		end
 	end 
 
-	if self.isMoving then
-		if math.abs(self.offset.x) >= tilewidth or math.abs(self.offset.y) >= tileheight then
-			self.offset = Point(0, 0)
-			self:setPos(self.pos + faceOffsets[self.face])
-			if next(self.path) then				
-				self:turn(table.remove(self.path, 1))
-			else
-				self.path = nil
-				self.isMoving = false
-				Fighter.set(self.pos, self)
-			end
-		else
-			local offset = faceOffsets[self.face]
-			local speed = 200
-			self.offset = self.offset + (offset * dt * speed) 
-		end
-	elseif self.selected then
+	if not self.isMoving and self.selected then
 		local mouse_x = math.floor(love.mouse.getX() / tilewidth)
 		local mouse_y = math.floor(love.mouse.getY() / tileheight)
 		local dest = Point(mouse_x, mouse_y)
@@ -130,9 +114,7 @@ end
 
 function Fighter:startMove()
 	if self.path and not self.isMoving then
-		self:turn(table.remove(self.path, 1))
-		self.isMoving = true
-		Fighter.set(self.pos, nil)
+		self:addAnimation(MoveAnimation(self))
 	end
 end
 
@@ -186,10 +168,11 @@ function Fighter:draw()
 		love.graphics.reset()
 		
 		if self.path then
-			local p = Point(self.pos.x, self.pos.y)
-			for _, direction in ipairs(self.path) do
-				p:move(direction)
-				love.graphics.draw(directionimages[direction], p.x * tilewidth, p.y * tileheight)
+			for i=2, #self.path do
+				local from = self.path[i-1]
+				local to = self.path[i]
+				local direction = from:direction(to)
+				love.graphics.draw(directionimages[direction], to.x * tilewidth, to.y * tileheight)
 			end
 		end
 	end

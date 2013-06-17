@@ -10,6 +10,14 @@ function Point:manhattanLength(other)
 	return math.abs(self.x-other.x) + math.abs(self.y-other.y)
 end
 
+function Point:reset()
+	self.x, self.y = 0, 0
+end
+
+function Point:set(x,y)
+	self.x, self.y = x, y
+end
+
 function Point:getDistanceFromStart()
 	if self.prev then
 		return 1 + self.prev:getDistanceFromStart()
@@ -81,7 +89,7 @@ function Point:getF(dest)
 end
 
 function Point:__tostring()
-	return ("(%d, %d)"):format(self.x, self.y)
+	return ("(%g, %g)"):format(self.x, self.y)
 end
 
 function Point:samePointInList(list)
@@ -168,9 +176,10 @@ function Point:findPath(dest, fighter)
 			end
 
 			local path = {}
-			for i=#points, 2, -1 do
-				local direction = points[i]:direction(points[i-1])
-				table.insert(path, direction)
+			for i=#points, 1, -1 do
+				local p = points[i]
+				p.prev = nil
+				table.insert(path, p)
 			end
 			return path
 		end
