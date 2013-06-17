@@ -35,7 +35,7 @@ end
 function WalkAnimation:update(dt)
 	local updateQuad = false
 
-	if self.fighter.isMoving then
+	if self.fighter:isMoving() then
 		self.elapsed = self.elapsed + dt
 
 		local frameIndex = (math.floor(self.elapsed * WalkAnimation.FRAMERATE) % 4) + 1
@@ -75,8 +75,6 @@ function MoveAnimation:initialize(fighter)
 
 	self.fighter = fighter
 	self.elapsed = 0
-
-	fighter.isMoving = true
 end
 
 function MoveAnimation:update(dt)
@@ -86,8 +84,6 @@ function MoveAnimation:update(dt)
 	local fighter = self.fighter
 
 	if step >= #fighter.path then
-		fighter.isMoving = false
-
 		Fighter.set(fighter.pos, nil)
 		fighter.pos = fighter.path[#fighter.path]
 		Fighter.set(fighter.pos, fighter)

@@ -100,7 +100,7 @@ function Fighter:update(dt)
 		end
 	end 
 
-	if not self.isMoving and self.selected then
+	if not self:isMoving() and self.selected then
 		local mouse_x = math.floor(love.mouse.getX() / tilewidth)
 		local mouse_y = math.floor(love.mouse.getY() / tileheight)
 		local dest = Point(mouse_x, mouse_y)
@@ -112,8 +112,12 @@ function Fighter:update(dt)
 	end
 end
 
+function Fighter:isMoving()
+	return self.animations.move
+end
+
 function Fighter:startMove()
-	if self.path and not self.isMoving then
+	if self.path and not self:isMoving() then
 		self:addAnimation(MoveAnimation(self))
 	end
 end
@@ -146,7 +150,7 @@ function Fighter:draw()
 		love.graphics.reset()
 	end
 
-	if self.selected and not self.isMoving then
+	if self.selected and not self:isMoving() then
 		love.graphics.setColor(0x00, 0xFF, 0x00, 0x80)
 
 		local beginY = math.max(0, self.pos.y - self.range)
