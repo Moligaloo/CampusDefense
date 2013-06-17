@@ -73,13 +73,14 @@ function Fighter:initialize(map, info)
 
 	local posX = math.floor(info.x / self.width)
 	local posY = math.floor(info.y / self.height)
-	self:setPos(Point(posX, posY))
+	self.pos = Point(posX, posY)
 
 	Fighter.set(self.pos, self)
 
 	self.animations = {}
 
 	self:addAnimation(WalkAnimation(self, fighterOrigin))
+	self:addAnimation(PathUpdaterAnimation(self))
 end
 
 local faceOffsets = {
@@ -97,17 +98,6 @@ function Fighter:update(dt)
 	for name, animation in pairs(self.animations) do
 		if animation:update(dt) == Animation.DONE then
 			self.animations[name] = nil
-		end
-	end 
-
-	if not self:isMoving() and self.selected then
-		local mouse_x = math.floor(love.mouse.getX() / tilewidth)
-		local mouse_y = math.floor(love.mouse.getY() / tileheight)
-		local dest = Point(mouse_x, mouse_y)
-		if dest:onScreen() and self:inRange(dest) 
-			and (self.dest == nil or (self.dest.x ~= mouse_x or self.dest.y ~= mouse_y)) then
-			self.dest = dest
-			self.path = self.pos:findPath(self.dest, self)
 		end
 	end
 end
@@ -212,10 +202,6 @@ function Fighter:turn(face)
 	if self.face ~= face then
 		self.face = face
 	end
-end
-
-function Fighter:setPos(pos)
-	self.pos = pos
 end
 
 function Fighter:mouseIn(x,y)

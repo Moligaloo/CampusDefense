@@ -113,4 +113,41 @@ function MoveAnimation:update(dt)
 	return Animation.RUNNING
 end
 
+-- Path updater
+
+PathUpdaterAnimation = Animation:subclass 'PathUpdaterAnimation'
+
+function PathUpdaterAnimation:initialize(fighter)
+	Animation.initialize(self, 'path_updater')
+	self.fighter = fighter
+end
+
+function PathUpdaterAnimation:update(dt)
+	local fighter = self.fighter
+
+	if not fighter:isMoving() and fighter.selected then
+		local mouseX = math.floor(love.mouse.getX() / tilewidth)
+		local mouseY = math.floor(love.mouse.getY() / tileheight)
+		local dest = Point(mouseX, mouseY)
+
+		if self.dest and self.dest:equals(dest) then
+			return Animation.RUNNING
+		end
+
+		if not dest:onScreen() then
+			return Animation.RUNNING
+		end
+
+		if not fighter:inRange(dest) then
+			return Animation.RUNNING
+		end
+
+		self.dest = dest
+		fighter.path = fighter.pos:findPath(dest, fighter)
+	end
+
+	return Animation.RUNNING
+end
+
+
 
