@@ -71,6 +71,7 @@ function Fighter:initialize(info)
 	local tileset = tile.tileset
 
 	self.image = tileset.image
+	self.quad = tile.quad
 	self.width = tileset.tileWidth
 	self.height = tileset.tileHeight
 	
@@ -80,20 +81,18 @@ function Fighter:initialize(info)
 	local column = math.floor(x / fighterWidth)
 	local row = math.floor(y / fighterHeight)
 	local fighterOrigin = Point(column * fighterWidth, row * fighterHeight)
-
-	self.face = number2face[math.floor((y - fighterOrigin.y) / self.height)]
-	self.quad = tile.quad
-
-	self.offset = Point(0,0)
-	self.hp = info.properties.hp or 10
-	self.maxhp = info.properties.maxhp or 10
-	self.range = 5
-
 	local posX = math.floor(info.x / self.width)
 	local posY = math.floor(info.y / self.height)
 	self.pos = Point(posX, posY)
-
 	Fighter.set(self.pos, self)
+	self.offset = Point(0,0)
+
+	self.face = number2face[math.floor((y - fighterOrigin.y) / self.height)]
+	
+	self.hp = info.properties.hp or 10
+	self.maxhp = info.properties.maxhp or 10
+	self.range = 5
+	self.camp = info.properties.camp
 
 	self.animations = {}
 
@@ -199,6 +198,10 @@ function Fighter:draw()
 		local height = 5
 		local x = self.pos.x * self.width + 1 + self.offset.x
 		local y = (self.pos.y +1) * self.height + self.offset.y
+
+		if self.pos.y == vtiles-1 then
+			y = y - 10
+		end
 		
 		love.graphics.setColor(0xFF, 0x00, 0x00, 0x80)
 		love.graphics.rectangle('fill', x, y, hpWidth, height)
